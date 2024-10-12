@@ -1,0 +1,18 @@
+FROM vicofran/mybuttonprojectbase:latest
+
+WORKDIR /app
+
+COPY ./mybuttonproject.api/package*.json /app/mybuttonproject.api/
+COPY ./mybuttonproject.web/package*.json /app/mybuttonproject.web/
+
+RUN cd ./mybuttonproject.api && npm install
+RUN cd ./mybuttonproject.web && npm install
+
+COPY . ./
+
+RUN npm install -g concurrently
+
+EXPOSE 3000
+EXPOSE 8080
+
+CMD ["concurrently", "--kill-others", "npm start --prefix ../../app/mybuttonproject.web", "npm run dev_server --prefix ../../app/mybuttonproject.api"]
