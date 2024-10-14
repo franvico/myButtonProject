@@ -9,10 +9,12 @@ export default [
   },
   {
     rules: {
-      // Agrega las reglas que desees
-      'no-unused-vars': 'warn', // Muestra advertencias si hay variables no utilizadas
-      'quotes': ['error', 'single'], // Fuerza el uso de comillas simples
-      'semi': ['error', 'always'], // Requiere punto y coma al final de las líneas
+      'no-unused-vars': 'warn',
+      'quotes': ['error', 'single'],
+      'semi': ['error', 'always'],
+      'no-trailing-spaces': 'error',
+      'indent': ['error', 2],
+      'eol-last': ['error', 'always'],
     },
   },
   pluginJs.configs.recommended,
