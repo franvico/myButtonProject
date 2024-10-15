@@ -2,11 +2,11 @@ import logoReact from './assets/logoReact.svg';
 import logoNodejs from './assets/logoNodejs.svg';
 import logoDocker from './assets/logoDocker.svg';
 import './App.css';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import Card, {CardBody} from './components/Card';
 import Boton from './components/Boton';
 import ListChistes from './components/ListChistes';
-import ListQuijote from './components/ListQuijote';
+const ListQuijote = React.lazy(() => import('./components/ListQuijote'));
 
 function App() {
 
@@ -19,6 +19,7 @@ function App() {
   const [pagina, setPagina] = useState(0);
   const [cargaTrasFetch, setCargaTrasFetch] = useState(false);
   const [primerClic, setPrimerClic] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   // solo se ejecutará una vez tras el fetch
   useEffect(() => {
@@ -39,9 +40,17 @@ function App() {
       <Card>
         <CardBody/>
         <div className='divContenido'>
-          {nombreFichero === 'chistes' && <ListChistes data={contenido} respuesta={textoBoton}/>}
-          {nombreFichero === 'quijote' && <ListQuijote data={contenido}/>}
-          <Boton texto={textoBoton} onClick={primerClic ? getContenido : mostrarContenido}/>
+          {isLoading ? (
+            <div>Cargando contenido...</div>
+          ) : (
+            <>
+              {nombreFichero === 'chistes' && <ListChistes data={contenido} respuesta={textoBoton}/>}
+              <Suspense fallback={<div>Cargando El Quijote...</div>}>
+                {nombreFichero === 'quijote' && <ListQuijote data={contenido}/>}
+              </Suspense>
+              <Boton texto={textoBoton} onClick={primerClic ? getContenido : mostrarContenido}/>
+            </>
+          )}
         </div>
       </Card>
 
@@ -56,6 +65,7 @@ function App() {
   function getContenido(){
 
     if(ruta !== ''){
+      setIsLoading(true);
       fetch(`http://localhost:3000/contenidoAleatorio?contenido=${ruta}`)
         .then(response=>{
           return response.json();
@@ -70,6 +80,8 @@ function App() {
           setNombreFichero('');
           setRuta('quijote');
           console.log('Este es el error ' + err + '\nSe sirve otro documento en su lugar');
+        }).finally(()=>{
+          setIsLoading(false);
         });
     }
   }
