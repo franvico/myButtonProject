@@ -1,0 +1,5 @@
+.list{
+    width: auto;
+    height: 60vh;
+    overflow-y: auto;
+}
