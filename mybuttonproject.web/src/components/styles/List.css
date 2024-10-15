@@ -2,4 +2,18 @@
     width: auto;
     height: 60vh;
     overflow-y: auto;
+    font-size: 2vh;
+    flex-direction: column-reverse;
+}
+
+.divPregunta, .divParrafo{
+    text-align: left;
+}
+
+.divRespuesta{
+    text-align: right;
+}
+
+.scrollable-container::-webkit-scrollbar {
+    display: none;
 }
