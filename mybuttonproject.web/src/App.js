@@ -11,7 +11,8 @@ import ListQuijote from './components/ListQuijote';
 function App() {
 
   const [ruta, setRuta] = useState('chistes');
-  const [textoBoton, setTextoBoton] = useState('Cuéntame un chiste');
+  const [textoBoton, setTextoBoton] = useState(ruta === 'chistes' ? 'Cuéntame un chiste' : 'Leer el Quijote');
+  const [titulo, setTitulo] = useState(ruta === 'chistes' ? 'Bienvenido al botón de chistes aleatorios' : 'Suficientes risas, pongámonos serios');
   const [fichero, setFichero] = useState(null);
   const [nombreFichero, setNombreFichero] = useState('');
   const [contenido, setContenido] = useState([]);
@@ -34,7 +35,7 @@ function App() {
 
   return (
     <div className='App-container'>
-      <h1>Bienvenido al botón de chistes aleatorios</h1>
+      <h1>{titulo}</h1>
       <Card>
         <CardBody/>
         <div className='divContenido'>
@@ -74,15 +75,32 @@ function App() {
   }
 
   function mostrarContenido(){
+
     if(textoBoton === 'Respuesta'){
       setPagina(pagina + 1);
       setTextoBoton(nombreFichero === 'chistes' ? 'Otro Chiste' : 'Siguiente');
+    }
+    else if(contenido.length === fichero.length){
+      reiniciarApp();
+      return;
     }
     else{
       nombreFichero === 'quijote' ? setPagina(pagina + 1) : setPagina(pagina);
       setContenido(contenido.concat(fichero[pagina]));
       setTextoBoton(nombreFichero === 'chistes' ? 'Respuesta' : 'Siguiente');
     }
+  }
+
+  function reiniciarApp(){
+    setRuta(nombreFichero === 'chistes' ? 'quijote' : 'chistes');
+    setTextoBoton(nombreFichero === 'chistes' ?'Leer el Quijote' : 'Cuéntame un chiste');
+    setTitulo(nombreFichero === 'chistes' ? 'Suficientes risas, pongámonos serios' : 'Bienvenido al botón de chistes aleatorios');
+    setFichero(null);
+    setNombreFichero('');
+    setContenido([]);
+    setPagina(0);
+    setCargaTrasFetch(false);
+    setPrimerClic(true);
   }
 }
 
