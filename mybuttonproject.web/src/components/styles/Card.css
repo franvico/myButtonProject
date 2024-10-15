@@ -1,0 +1,25 @@
+.card {
+    background-color: white;
+    border-radius: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    text-align: center;
+    margin: 20px auto;
+    color:black;
+    width: 80%;
+    max-height: 75vh;
+  }
+
+  .card-body{
+    height: 100vh;
+  }
+  
+  .card-title {
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+  
+  .card-text {
+    font-size: 16px;
+    margin-bottom: 20px;
+  }
