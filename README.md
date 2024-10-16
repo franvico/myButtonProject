@@ -1,79 +1,126 @@
-# Getting Started with Create React App
+# My Button Project
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Este proyecto es un aplicación web que consta de un botón. Al pulsarlo, éste mostrará contenido aleatorio en formato texto.
 
-## Available Scripts
+## Tecnologías utilizadas
 
-In the project directory, you can run:
+Para la realización de este proyecto se han utilizado las siguientes tecnologías:
 
-### `npm start`
+- Frontend:
+   - React
+   - Bootstrap
+   - CSS
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- Backend
+    - Express JS
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- Despliegue
+    - Docker
+    - Nginx
 
-### `npm test`
+ - Control de versiones:
+    - GitHub
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+ - Tanto frontend como backend se han desarrollado con el uso del linter ESlint para mantener un correcto formato de código.
+ - El proyecto se ha desarrollado completamente en Linux en integración con VSCode.
 
-### `npm run build`
+## Cómo desplegar la aplicación
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Dado que la aplicación se ha desarrollado enteramente en Docker, su despliegue es sencillo siguiendo estos paso:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### 1. Clonar repositorio
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Clonar repositorio en servidor o local.
 
-### `npm run eject`
+### 2. Añadir ficheros .env
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Es necesario añadir dos ficheros de configuración de variables de entorno. Uno para el backend y otro para el frontend. Se proporcionan los ficheros de referencia .env.ejemplo como ejemplo de las variables de entorno que es obligatorio añadir.
+ - Frontend: mybuttonproject.web/.env
+ - Backend: mybuttonproject.api/.env
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+ ### 3. Generar imagen OCI y ejecutar contenedor Docker
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+ Todos los comandos que se describen en este punto han de lanzarse desde la raíz del proyecto, donde se alojan los ficheros Dockerfile y Dockerfile.dev
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+#### Opción 1: Docker compose
 
-## Learn More
+Se puede generar la imagen OCI y lanzar el contenedor Docker con tan solo un comando usando docker compose. Además, se ha configurado el despliegue para que se pueda elegir entre despliegue en desarrollo y en producción.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+ - Despliegue en desarrollo:
+    
+    Desplegar la aplicación en un contenedor de desarrollo permite hacer cambios y visualizarlos en tiempo real en el contenedor gracias al uso de volúmenes. Hay que tener en cuenta que con esta opción se generará una imagen más pesada debido al uso de las dependencias de desarrollo.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+        docker-compose -f docker-compose-dev.yml up
 
-### Code Splitting
+    En el fichero docker-compose-dev.yml se encuentran las características del despliegue en desarrollo: nombre de la imagen creada, puestos de escucha, archivo Dockerfile que se usará para generar la imagen y levantar el contenedor, volúmenes, etc.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+- Despliegue en producción:
 
-### Analyzing the Bundle Size
+    Mediante este despliegue se obtiene la imagen con la build final del proyecto y el contenedor Docker donde se estará ejecutando.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+        docker-compose up
 
-### Making a Progressive Web App
+    En el fichero Dockerfile se encuentran las instrucciones para compilar la aplicación y lanzar el contenedor. En la opción de desarrollo Nginx será el servidor web encargado de mostrar el frontend. Su configuración e instalación también se realiza mediante este fichero.
+    
+    Tras lanzar este comando la aplicación será visible a través de http://localhost:8080 sirviendo el backend a través del puerto 3000.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+#### Opción 2: Docker build y docker run
 
-### Advanced Configuration
+Se pueden lanzar ambos despliegues, desarrollo y producción, de forma manual, es decir, ejecutando primero el comando de creación de la imagen OCI y después el levantamiento del contenedor a partir de dicha imagen. Sólo se recomienda este método para levantar la imagen final de producción, ya que el comando para levantar el contenedor de desarrollo sería largo teniendo en cuenta que habría que indicar, además de los puertos de escucha, los volúmenes a utilizar.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+- Crear imagen que contiene la build final del proyecto:
 
-### Deployment
+        docker build -t mybuttonproject:latest .
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+- Levantar el contenedor a partir de la imagen de producción:
 
-### `npm run build` fails to minify
+        docker run -p 3000:3000 -p 8080:80 mybuttonproject:latest
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+    Tras lanzar este comando la aplicación será visible a través de http://localhost:8080 sirviendo el backend a través del puerto 3000.
 
-# React + Vite
+#### NOTA:
+    La imagen final de producción está basada en una imagen base que contiene las dependencias de producción de la aplicación. Esta imagen base se puede encontrar con el nombre vicofran/mybuttonprojectbase:latest en DockerHub.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Descripción de la API
 
-Currently, two official plugins are available:
+La API se ha desarrollado con el uso de Express JS para lanzar el servidor backend.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+La API consta de sólo un endpoint funcional. A través de este endpoint, el frontend solicitará el conenido de un fichero en concreto ("chistes" o "quijote").
+El contenido de ambos ficheros se encuentra en los archivos .json con el mismo nombre en la carpeta /assets.
+
+Con intención de que la aplicación sirviera realmente contenido aleatorio no almacenado en el servidor, se ha tratado de hacer una conexión a la API de OpenAI con una consulta concreta. Si la respuesta contuviese algún error, entonces el backend resolvería la petición con uno de los archivos estáticos.
+
+Las clave y el prompt de la petición para acceder al endpoint de OpenAI se encuentran en el fichero .env almacenados como variables de entorno.
+Para tener acceso a las variables de entorno desde Espress JS han sido necesarias las dependencias **dotenv**.
+
+También ha sido necesario el uso de la dependencia **cors** para permitir la comunicación del frontend con la API.
+
+## Explicación de la arquitectura utilizada
+
+Con este diseño de arquiectura se han buscado dos objetivos:
+- Poder levantar la aplicación con tan **sólo una imagen OCI**
+- Que esta imagen incluyera **dos proyectos claramente diferenciados** (api y web).
+
+Se ha considerado desde el principio importante cumplir con esas dos características.
+Ambas partes del proyecto comparten en la raíz los ficheros de creación de imagen OCI y levantamiento del contenedor de despliegue.
+
+## Dificultades a la hora de realizar el proyecto
+
+- Desconocimiento de las distintas tecnologías que se han usado en el proyecto. La gran parte del tiempo de realización del proyecto ha sido investigando y estudiando estas nuevas tecnologías. (React, NodeJS, Docker).
+- Despliegue en desarrollo del proyecto. Al principio se optó por React + Vite pero no fue posible crear volúmenes para el desarrollo del frontend. Para resolverlo se optó por crear el proyecto de nuevo en Linux (se estaba desarrollando en Windows) por descartar problemas de compatibilidad. Pero el problema persistió y se optó por descartar Vite. Para compilar el frontend y lanzar el contenedor en producción Vite no presentó problemas, pero era inviable desarrollar sin ver los cambios en tiempo real desde el contenedor.
+- Instalación de linter ESLint en el frontend.
+
+## Algunas referencias usadas para aprender las tecnologías utilizadas en el proyecto.
+
+- Docker:
+
+    - Youtube - HOLA MUNDO - https://www.youtube.com/watch?v=4Dko5W96WHg
+
+- React
+
+	- Youtube - HOLAMUNDO -	https://www.youtube.com/watch?v=yIr_1CasXkM
+	
+	- Youtube - MIDULIVE - https://www.youtube.com/watch?v=7iobxzd_2wY&list=PLUofhDIg_38q4D0xNWp7FEHOTcZhjWJ29
+
+- Node JS
+	- Youtube - MIDULIVE - https://www.youtube.com/watch?v=yB4n_K7dZV8&list=PLUofhDIg_38qm2oPOV-IRTTEKyrVBBaU7
