@@ -6,15 +6,16 @@ import React, { useState, useEffect, Suspense } from 'react';
 import Card, {CardBody} from './components/Card';
 import Boton from './components/Boton';
 import ListChistes from './components/ListChistes';
+import list_config from './lists_config.json';
 const ListQuijote = React.lazy(() => import('./components/ListQuijote'));
 
 function App() {
 
-  const [ruta, setRuta] = useState('chistes');
-  const [textoBoton, setTextoBoton] = useState(ruta === 'chistes' ? 'Cuéntame un chiste' : 'Leer el Quijote');
-  const [titulo, setTitulo] = useState(ruta === 'chistes' ? 'Bienvenido al botón de chistes aleatorios' : 'Suficientes risas, pongámonos serios');
+  const [listActual, setListOrder] = useState(0);
+  const [nombreFichero, setNombreFichero] = useState(list_config['listOrder'][listActual]);
+  const [textoBoton, setTextoBoton] = useState(list_config[nombreFichero].textoBoton[0]);
+  const [titulo, setTitulo] = useState(list_config[nombreFichero].titulo);
   const [fichero, setFichero] = useState(null);
-  const [nombreFichero, setNombreFichero] = useState('');
   const [contenido, setContenido] = useState([]);
   const [pagina, setPagina] = useState(0);
   const [cargaTrasFetch, setCargaTrasFetch] = useState(false);
@@ -26,8 +27,8 @@ function App() {
     if(cargaTrasFetch){
       if(primerClic){
         setContenido(contenido.concat(fichero[pagina]));
-        setTextoBoton(nombreFichero === 'chistes' ? 'Respuesta' : 'Siguiente');
-        setPagina(nombreFichero === 'chistes' ? pagina : pagina + 1);
+        setTextoBoton(list_config[nombreFichero].textoBoton[1]);
+        setPagina(list_config[nombreFichero].saltoPagina === 0 ? pagina : pagina + 1);
         setPrimerClic(false);
       }
     }
@@ -64,21 +65,18 @@ function App() {
 
   function getContenido(){
 
-    if(ruta !== ''){
+    if(contenido.length === 0){
       setIsLoading(true);
-      fetch(`http://localhost:3000/contenidoAleatorio?contenido=${ruta}`)
+      fetch(`http://localhost:3000/contenidoAleatorio?contenido=${nombreFichero}`)
         .then(response=>{
           return response.json();
         })
         .then(data=>{
-          setNombreFichero(ruta);
           setFichero(JSON.parse(data));
-          setRuta('');
           setCargaTrasFetch(true);
         })
         .catch(err=>{
-          setNombreFichero('');
-          setRuta('quijote');
+          reiniciarApp();
           console.log('Este es el error ' + err + '\nSe sirve otro documento en su lugar');
         }).finally(()=>{
           setIsLoading(false);
@@ -104,11 +102,16 @@ function App() {
   }
 
   function reiniciarApp(){
-    setRuta(nombreFichero === 'chistes' ? 'quijote' : 'chistes');
-    setTextoBoton(nombreFichero === 'chistes' ?'Leer el Quijote' : 'Cuéntame un chiste');
-    setTitulo(nombreFichero === 'chistes' ? 'Suficientes risas, pongámonos serios' : 'Bienvenido al botón de chistes aleatorios');
+
+    // si se terminan los .json disponibles se vuelve al primero
+    let listSiguiente = (listActual + 1) % list_config['listOrder'].length;
+    let nombreFicheroSiguiente = list_config['listOrder'][listSiguiente];
+
+    setListOrder(listSiguiente);
+    setNombreFichero(nombreFicheroSiguiente);
+    setTitulo(list_config[nombreFicheroSiguiente].titulo);
+    setTextoBoton(list_config[nombreFicheroSiguiente].textoBoton[0]);
     setFichero(null);
-    setNombreFichero('');
     setContenido([]);
     setPagina(0);
     setCargaTrasFetch(false);
