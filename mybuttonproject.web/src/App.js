@@ -7,6 +7,7 @@ import Card, {CardBody} from './components/Card';
 import Boton from './components/Boton';
 import ListChistes from './components/ListChistes';
 import list_config from './lists_config.json';
+import { getContenido, mostrarContenido, reiniciarApp } from './AppFunctions';
 const ListQuijote = React.lazy(() => import('./components/ListQuijote'));
 
 function App() {
@@ -22,13 +23,17 @@ function App() {
   const [primerClic, setPrimerClic] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
 
+  const reiniciarAppParams = {listActual, list_config, setListOrder, setNombreFichero, setTitulo, setTextoBoton, setFichero, setContenido, setPagina, setCargaTrasFetch, setPrimerClic};
+  const getContenidoParams = {contenido, setIsLoading, setFichero, setCargaTrasFetch, nombreFichero, reiniciarApp, reiniciarAppParams};
+  const mostrarContenidoParams = {textoBoton, setPagina, setContenido, contenido, fichero, pagina, nombreFichero, setTextoBoton, reiniciarApp, reiniciarAppParams, list_config};
+
   // solo se ejecutará una vez tras el fetch
   useEffect(() => {
     if(cargaTrasFetch){
       if(primerClic){
         setContenido(contenido.concat(fichero[pagina]));
         setTextoBoton(list_config[nombreFichero].textoBoton[1]);
-        setPagina(list_config[nombreFichero].saltoPagina === 0 ? pagina : pagina + 1);
+        setPagina(list_config[nombreFichero].espera === 0 ? pagina + 1 : pagina);
         setPrimerClic(false);
       }
     }
@@ -49,7 +54,7 @@ function App() {
               <Suspense fallback={<div>Cargando El Quijote...</div>}>
                 {nombreFichero === 'quijote' && <ListQuijote data={contenido}/>}
               </Suspense>
-              <Boton texto={textoBoton} onClick={primerClic ? getContenido : mostrarContenido}/>
+              <Boton texto={textoBoton} onClick={()=>{primerClic ? getContenido(getContenidoParams) : mostrarContenido(mostrarContenidoParams);}}/>
             </>
           )}
         </div>
@@ -62,61 +67,6 @@ function App() {
       </p>
     </div>
   );
-
-  function getContenido(){
-
-    if(contenido.length === 0){
-      setIsLoading(true);
-      fetch(`http://localhost:3000/contenidoAleatorio?contenido=${nombreFichero}`)
-        .then(response=>{
-          return response.json();
-        })
-        .then(data=>{
-          setFichero(JSON.parse(data));
-          setCargaTrasFetch(true);
-        })
-        .catch(err=>{
-          reiniciarApp();
-          console.log('Este es el error ' + err + '\nSe sirve otro documento en su lugar');
-        }).finally(()=>{
-          setIsLoading(false);
-        });
-    }
-  }
-
-  function mostrarContenido(){
-
-    if(textoBoton === 'Respuesta'){
-      setPagina(pagina + 1);
-      setTextoBoton(nombreFichero === 'chistes' ? 'Otro Chiste' : 'Siguiente');
-    }
-    else if(contenido.length === fichero.length){
-      reiniciarApp();
-      return;
-    }
-    else{
-      nombreFichero === 'quijote' ? setPagina(pagina + 1) : setPagina(pagina);
-      setContenido(contenido.concat(fichero[pagina]));
-      setTextoBoton(nombreFichero === 'chistes' ? 'Respuesta' : 'Siguiente');
-    }
-  }
-
-  function reiniciarApp(){
-
-    // si se terminan los .json disponibles se vuelve al primero
-    let listSiguiente = (listActual + 1) % list_config['listOrder'].length;
-    let nombreFicheroSiguiente = list_config['listOrder'][listSiguiente];
-
-    setListOrder(listSiguiente);
-    setNombreFichero(nombreFicheroSiguiente);
-    setTitulo(list_config[nombreFicheroSiguiente].titulo);
-    setTextoBoton(list_config[nombreFicheroSiguiente].textoBoton[0]);
-    setFichero(null);
-    setContenido([]);
-    setPagina(0);
-    setCargaTrasFetch(false);
-    setPrimerClic(true);
-  }
 }
 
 export default App;
