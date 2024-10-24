@@ -1,6 +1,6 @@
 # My Button Project
 
-Este proyecto es un aplicación web que consta de un botón. Al pulsarlo, éste mostrará contenido aleatorio en formato texto.
+Este proyecto es una aplicación web que consta de un botón. Al pulsarlo, éste mostrará contenido aleatorio en formato texto.
 
 ## Tecnologías utilizadas
 
@@ -26,11 +26,11 @@ Para la realización de este proyecto se han utilizado las siguientes tecnologí
 
 ## Cómo desplegar la aplicación
 
-Dado que la aplicación se ha desarrollado enteramente en Docker, su despliegue es sencillo siguiendo estos paso:
+Dado que la aplicación se ha desarrollado enteramente en Docker, su despliegue es sencillo siguiendo estos pasos:
 
 ### 1. Clonar repositorio
 
-Clonar repositorio en servidor o local.
+Clonar repositorio en servidor remoto o local.
 
 ### 2. Añadir ficheros .env
 
@@ -52,7 +52,7 @@ Se puede generar la imagen OCI y lanzar el contenedor Docker con tan solo un com
 
         docker-compose -f docker-compose-dev.yml up
 
-    En el fichero docker-compose-dev.yml se encuentran las características del despliegue en desarrollo: nombre de la imagen creada, puestos de escucha, archivo Dockerfile que se usará para generar la imagen y levantar el contenedor, volúmenes, etc.
+    En el fichero docker-compose-dev.yml se encuentran las características del despliegue en desarrollo: nombre de la imagen creada, puertos de escucha, archivo Dockerfile que se usará para generar la imagen y levantar el contenedor, volúmenes, etc.
 
 - Despliegue en producción:
 
@@ -60,7 +60,7 @@ Se puede generar la imagen OCI y lanzar el contenedor Docker con tan solo un com
 
         docker-compose up
 
-    En el fichero Dockerfile se encuentran las instrucciones para compilar la aplicación y lanzar el contenedor. En la opción de desarrollo Nginx será el servidor web encargado de mostrar el frontend. Su configuración e instalación también se realiza mediante este fichero.
+    En el fichero Dockerfile se encuentran las instrucciones para compilar la aplicación y lanzar el contenedor. En la opción de despliegue en producción, Nginx será el servidor web encargado de mostrar el frontend. Su configuración e instalación también se realiza mediante este fichero.
     
     Tras lanzar este comando la aplicación será visible a través de http://localhost:8080 sirviendo el backend a través del puerto 3000.
 
@@ -78,8 +78,10 @@ Se pueden lanzar ambos despliegues, desarrollo y producción, de forma manual, e
 
     Tras lanzar este comando la aplicación será visible a través de http://localhost:8080 sirviendo el backend a través del puerto 3000.
 
-#### NOTA:
-    La imagen final de producción está basada en una imagen base que contiene las dependencias de producción de la aplicación. Esta imagen base se puede encontrar con el nombre vicofran/mybuttonprojectbase:latest en DockerHub.
+#### Imagen Base:
+La imagen final de producción está basada en una imagen base que contiene las dependencias de producción de la aplicación. Esta imagen base se puede encontrar en DockerHub con el nombre:
+
+    vicofran/mybuttonprojectbase:latest
 
 ## Descripción de la API
 
@@ -101,8 +103,16 @@ Con este diseño de arquiectura se han buscado dos objetivos:
 - Poder levantar la aplicación con tan **sólo una imagen OCI**
 - Que esta imagen incluyera **dos proyectos claramente diferenciados** (api y web).
 
-Se ha considerado desde el principio importante cumplir con esas dos características.
+Se ha considerado importante cumplir con esas dos características desde el principio del desarrollo.
 Ambas partes del proyecto comparten en la raíz los ficheros de creación de imagen OCI y levantamiento del contenedor de despliegue.
+
+## Escalabilidad de la aplicación
+
+Se ha actualizado la lógica del frontend para que la aplicación sea escalable a futuro.
+
+Mediante esta actualización, es posible añadir más ficheros estáticos para mostrar simplemente añadiendo su configuración propia en el archivo lists_config.json y añadiendo el componente React que lo mostrará.
+
+Gracias a esto se han eliminado del código original valores harcodeados que hacían muy difícil la integración de nuevos ficheros para mostrar, además de no cumplir con las buenas prácticas de desarrollo de código.
 
 ## Dificultades a la hora de realizar el proyecto
 
