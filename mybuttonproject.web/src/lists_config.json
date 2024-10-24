@@ -5,15 +5,15 @@
         "titulo" : "Bienvenido al botón de chistes aleatorios",
         "textoBoton" : ["Cuéntame un chiste", "Respuesta", "Otro chiste"],
         "tipoLista" : "ListChistes",
-        "espera" : 1
+        "bloques" : 2,
+        "esperaMsg" : "Cargando chistes..."
     },
     "quijote" : {
         "nombreFichero" : "chistes",
         "titulo" : "Suficientes risas, pongámonos serios",
         "textoBoton" : ["Leer el Quijote", "Siguiente"],
         "tipoLista" : "ListQuijote",
-        "espera" : 0
+        "bloques" : 1,
+        "esperaMsg" : "Cargando El Quijote..."
     }
 }
-
-    

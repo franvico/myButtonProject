@@ -8,6 +8,7 @@ import Boton from './components/Boton';
 import ListChistes from './components/ListChistes';
 import list_config from './lists_config.json';
 import { getContenido, mostrarContenido, reiniciarApp } from './AppFunctions';
+// const ListChistes = React.lazy(() => import('./components/ListChistes'));
 const ListQuijote = React.lazy(() => import('./components/ListQuijote'));
 
 function App() {
@@ -22,10 +23,20 @@ function App() {
   const [cargaTrasFetch, setCargaTrasFetch] = useState(false);
   const [primerClic, setPrimerClic] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  // algunos ficheros tienen más de una línea por párrafo, esta variable indica cuántos ciclos tengo que esperar para concatenar el siguiente párrafo del fichero al contenido a mostrar
+  // cuando llegue a 0 concatenaré el siguiente párrafo al contenido a mostrar
+  const [bloqueActual, setBloqueActual] = useState(1);
+  const [mensajeEspera, setMensajeEspera] = useState(list_config[nombreFichero].esperaMsg);
 
-  const reiniciarAppParams = {listActual, list_config, setListOrder, setNombreFichero, setTitulo, setTextoBoton, setFichero, setContenido, setPagina, setCargaTrasFetch, setPrimerClic};
+  const reiniciarAppParams = {listActual, list_config, setListOrder, setNombreFichero, setTitulo, setTextoBoton, setFichero, setContenido, setPagina, setCargaTrasFetch, setPrimerClic, setMensajeEspera};
   const getContenidoParams = {contenido, setIsLoading, setFichero, setCargaTrasFetch, nombreFichero, reiniciarApp, reiniciarAppParams};
-  const mostrarContenidoParams = {textoBoton, setPagina, setContenido, contenido, fichero, pagina, nombreFichero, setTextoBoton, reiniciarApp, reiniciarAppParams, list_config};
+  const mostrarContenidoParams = {setPagina, setContenido, contenido, fichero, pagina, nombreFichero, setTextoBoton, reiniciarApp, reiniciarAppParams, list_config, bloqueActual, setBloqueActual};
+
+  const listasIntegradas = {
+    ListChistes: ListChistes,
+    ListQuijote: ListQuijote
+  };
+  const listaActual = listasIntegradas[list_config[nombreFichero].tipoLista];
 
   // solo se ejecutará una vez tras el fetch
   useEffect(() => {
@@ -33,12 +44,12 @@ function App() {
       if(primerClic){
         setContenido(contenido.concat(fichero[pagina]));
         setTextoBoton(list_config[nombreFichero].textoBoton[1]);
-        setPagina(list_config[nombreFichero].espera === 0 ? pagina + 1 : pagina);
+        bloqueActual === list_config[nombreFichero].bloques ? setPagina(pagina + 1) : setBloqueActual(bloqueActual + 1);
         setPrimerClic(false);
       }
     }
 
-  },[fichero, nombreFichero, pagina, primerClic, cargaTrasFetch, contenido]);
+  },[fichero, nombreFichero, pagina, primerClic, cargaTrasFetch, contenido, bloqueActual]);
 
   return (
     <div className='App-container'>
@@ -47,12 +58,11 @@ function App() {
         <CardBody/>
         <div className='divContenido'>
           {isLoading ? (
-            <div>Cargando contenido...</div>
+            <div>{mensajeEspera}</div>
           ) : (
             <>
-              {nombreFichero === 'chistes' && <ListChistes data={contenido} respuesta={textoBoton}/>}
-              <Suspense fallback={<div>Cargando El Quijote...</div>}>
-                {nombreFichero === 'quijote' && <ListQuijote data={contenido}/>}
+              <Suspense fallback={<div>{mensajeEspera}</div>}>
+                {React.createElement(listaActual, { data: contenido, respuesta: textoBoton })}
               </Suspense>
               <Boton texto={textoBoton} onClick={()=>{primerClic ? getContenido(getContenidoParams) : mostrarContenido(mostrarContenidoParams);}}/>
             </>
