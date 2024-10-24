@@ -1,0 +1,19 @@
+{
+    "listOrder" : ["chistes", "quijote"],
+    "chistes" : {
+        "nombreFichero" : "chistes",
+        "titulo" : "Bienvenido al botón de chistes aleatorios",
+        "textoBoton" : ["Cuéntame un chiste", "Respuesta", "Otro chiste"],
+        "tipoLista" : "ListChistes",
+        "bloques" : 2,
+        "esperaMsg" : "Cargando chistes..."
+    },
+    "quijote" : {
+        "nombreFichero" : "chistes",
+        "titulo" : "Suficientes risas, pongámonos serios",
+        "textoBoton" : ["Leer el Quijote", "Siguiente"],
+        "tipoLista" : "ListQuijote",
+        "bloques" : 1,
+        "esperaMsg" : "Cargando El Quijote..."
+    }
+}
