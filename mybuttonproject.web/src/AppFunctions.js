@@ -1,10 +1,10 @@
-export function reiniciarApp({listActual, list_config, setListOrder, setNombreFichero, setTitulo, setTextoBoton, setFichero, setContenido, setPagina, setCargaTrasFetch, setPrimerClic, setMensajeEspera}){
+export function reiniciarApp({ordenFicheros, list_config, setOrdenFicheros, setNombreFichero, setTitulo, setTextoBoton, setFichero, setContenido, setPagina, setCargaTrasFetch, setPrimerClic, setMensajeEspera}){
 
   // si se terminan los .json disponibles se vuelve al primero
-  let listSiguiente = (listActual + 1) % list_config['listOrder'].length;
-  let nombreFicheroSiguiente = list_config['listOrder'][listSiguiente];
+  let listSiguiente = (ordenFicheros + 1) % list_config['ordenFicheros'].length;
+  let nombreFicheroSiguiente = list_config['ordenFicheros'][listSiguiente];
 
-  setListOrder(listSiguiente);
+  setOrdenFicheros(listSiguiente);
   setNombreFichero(nombreFicheroSiguiente);
   setTitulo(list_config[nombreFicheroSiguiente].titulo);
   setTextoBoton(list_config[nombreFicheroSiguiente].textoBoton[0]);

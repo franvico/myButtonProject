@@ -13,8 +13,8 @@ const ListQuijote = React.lazy(() => import('./components/ListQuijote'));
 
 function App() {
 
-  const [listActual, setListOrder] = useState(0);
-  const [nombreFichero, setNombreFichero] = useState(list_config['listOrder'][listActual]);
+  const [ordenFicheros, setOrdenFicheros] = useState(0);
+  const [nombreFichero, setNombreFichero] = useState(list_config['ordenFicheros'][ordenFicheros]);
   const [textoBoton, setTextoBoton] = useState(list_config[nombreFichero].textoBoton[0]);
   const [titulo, setTitulo] = useState(list_config[nombreFichero].titulo);
   const [fichero, setFichero] = useState(null);
@@ -28,7 +28,7 @@ function App() {
   const [bloqueActual, setBloqueActual] = useState(1);
   const [mensajeEspera, setMensajeEspera] = useState(list_config[nombreFichero].esperaMsg);
 
-  const reiniciarAppParams = {listActual, list_config, setListOrder, setNombreFichero, setTitulo, setTextoBoton, setFichero, setContenido, setPagina, setCargaTrasFetch, setPrimerClic, setMensajeEspera};
+  const reiniciarAppParams = {ordenFicheros, list_config, setOrdenFicheros, setNombreFichero, setTitulo, setTextoBoton, setFichero, setContenido, setPagina, setCargaTrasFetch, setPrimerClic, setMensajeEspera};
   const getContenidoParams = {contenido, setIsLoading, setFichero, setCargaTrasFetch, nombreFichero, reiniciarApp, reiniciarAppParams};
   const mostrarContenidoParams = {setPagina, setContenido, contenido, fichero, pagina, nombreFichero, setTextoBoton, reiniciarApp, reiniciarAppParams, list_config, bloqueActual, setBloqueActual};
 
