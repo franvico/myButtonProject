@@ -1,7 +1,6 @@
 {
-    "listOrder" : ["chistes", "quijote"],
+    "ordenFicheros" : ["chistes", "quijote"],
     "chistes" : {
-        "nombreFichero" : "chistes",
         "titulo" : "Bienvenido al botón de chistes aleatorios",
         "textoBoton" : ["Cuéntame un chiste", "Respuesta", "Otro chiste"],
         "tipoLista" : "ListChistes",
@@ -9,7 +8,6 @@
         "esperaMsg" : "Cargando chistes..."
     },
     "quijote" : {
-        "nombreFichero" : "chistes",
         "titulo" : "Suficientes risas, pongámonos serios",
         "textoBoton" : ["Leer el Quijote", "Siguiente"],
         "tipoLista" : "ListQuijote",
