@@ -78,6 +78,24 @@ Se pueden lanzar ambos despliegues, desarrollo y producción, de forma manual, e
 
     Tras lanzar este comando la aplicación será visible a través de http://localhost:8080 sirviendo el backend a través del puerto 3000.
 
+
+#### Opción 3: Lanzar con podman
+
+Podman es más ligero que docker, es daemon-less y permite un uso root-less completo. Es la opción preferida por Redhat, kubernetes y, en general, la mejor opción cuando está disponible.
+
+Para la validación del proyecto, con un control más fino, se puede lanzar de la siguiente forma:
+```bash
+# Montar el proyecto completo en el workdir de la imagen base y lanza un shell dentro del contedor
+podman run -it --rm --net=host -v$(pwd):/app docker.io/vicofran/mybuttonprojectbase:latest sh
+# Instalar dependencias de cada parte y enlazar los .env de ejemplo
+cd ./mybuttonproject.api && ln -fs .env.ejemplo .env && npm install; cd ..
+cd ./mybuttonproject.web && ln -fs .env.ejemplo .env && npm install; cd ..
+npm install -g concurrently
+# Lanzar la aplicación
+concurrently --kill-others "npm start --prefix ../../app/mybuttonproject.web" "npm run dev_server --prefix ../../app/mybuttonproject.api"
+
+```
+
 #### Imagen Base:
 La imagen final de producción está basada en una imagen base que contiene las dependencias de producción de la aplicación. Esta imagen base se puede encontrar en DockerHub con el nombre:
 
